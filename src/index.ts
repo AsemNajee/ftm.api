@@ -12,12 +12,6 @@ import rateLimit from 'express-rate-limit';
 import { errorHandler } from './middleware/errorHandler';
 
 
-import authRoutes from './routes/auth';
-import userRoutes from './routes/user';
-import articleRoutes from './routes/article';
-import categoryRoutes from './routes/category';
-import commentRoutes from './routes/comment';
-import { getState } from './controllers/stateController';
 import MajorsRouter from './routes/MajorsRouter';
 import CategoriesRouter from './routes/CategoriesRouter';
 import TeacherRouter from './routes/TeacherRouter';
@@ -30,6 +24,7 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:8080',
+    'http://localhost:8000',
     'https://techcode.buzog.com',
     'https://ftm-frontend-jade.vercel.app'
   ],
@@ -39,21 +34,12 @@ app.use(cors({
 // app.use(cors({ origin: true }));
 //app.use(helmet());
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 1000 }));
+app.use(express.json());
 
 
 app.get('/', (req, res) => {
   res.json({ message: 'API is running' });
 });
-
-// Endpoint للإحصائيات العامة
-app.get('/api/state', getState);
-
-// app.use('/api/auth', authRoutes);
-// app.use('/api/users', userRoutes);
-// app.use('/api/articles', articleRoutes);
-// app.use('/api/categories', categoryRoutes);
-// app.use('/api/comments', commentRoutes);
-
 
 app.use("/majors", MajorsRouter);
 app.use("/categories", CategoriesRouter);
@@ -73,7 +59,7 @@ app.post("/login", (req: Request, res: Response) => {
     const token = createToken();
     return res.json({ token });
   } catch (e) {
-    return res.status(500).json({ message: "An error occurred during login" });
+    return res.status(500).json({ message: "An error occurred during login", error: e instanceof Error ? e.message : "Unknown error" });
   }
 });
 
