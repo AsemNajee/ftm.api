@@ -6,7 +6,6 @@ const CategorySchema = new Schema(
     title: { type: String, required: [true, "يجب ادخال عنوان القسم"] },
   },
   {
-    virtuals: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   },
